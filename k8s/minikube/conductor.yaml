@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: conductor
+  namespace: conductor-demo
+spec:
+  selector:
+    app: conductor
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: grpc
+      port: 5000
+      targetPort: 5000
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conductor
+  namespace: conductor-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conductor
+  template:
+    metadata:
+      labels:
+        app: conductor
+    spec:
+      containers:
+        - name: conductor
+          image: orkesio/orkes-conductor-community-standalone:1.1.12
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+            - containerPort: 5000

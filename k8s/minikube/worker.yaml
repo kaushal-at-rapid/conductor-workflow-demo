@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-worker-service
+  namespace: conductor-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-worker-service
+  template:
+    metadata:
+      labels:
+        app: go-worker-service
+    spec:
+      containers:
+        - name: go-worker-service
+          image: go-worker-service:local
+          imagePullPolicy: Never
+          env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: user
+            - name: DB_PASSWORD
+              value: password
+            - name: DB_NAME
+              value: conductor
+            - name: CONDUCTOR_API_URL
+              value: http://conductor:8080/api

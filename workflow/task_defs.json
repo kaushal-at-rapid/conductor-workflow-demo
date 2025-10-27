@@ -1,0 +1,24 @@
+[
+  {
+    "name": "create_enterprise_task",
+    "description": "Task to create an enterprise in the database",
+    "retryCount": 3,
+    "timeoutSeconds": 3600,
+    "responseTimeoutSeconds": 3600,
+    "timeoutPolicy": "TIME_OUT_WF",
+    "retryLogic": "FIXED",
+    "retryDelaySeconds": 60,
+    "ownerEmail": "admin@example.com"
+  },
+  {
+    "name": "create_user_task",
+    "description": "Task to create a user in the database",
+    "retryCount": 3,
+    "timeoutSeconds": 3600,
+    "responseTimeoutSeconds": 3600,
+    "timeoutPolicy": "TIME_OUT_WF",
+    "retryLogic": "FIXED",
+    "retryDelaySeconds": 60,
+    "ownerEmail": "admin@example.com"
+  }
+]

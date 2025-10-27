@@ -1,0 +1,30 @@
+{
+  "name": "onboard_employee_workflow",
+  "description": "Workflow to onboard a new employee by creating an enterprise and user record.",
+  "version": 1,
+  "inputParameters": ["entp_name", "user_name"],
+  "tasks": [
+    {
+      "name": "create_enterprise_task",
+      "taskReferenceName": "create_enterprise_ref",
+      "inputParameters": {
+        "entp_name": "${workflow.input.entp_name}"
+      },
+      "type": "SIMPLE"
+    },
+    {
+      "name": "create_user_task",
+      "taskReferenceName": "create_user_ref",
+      "inputParameters": {
+        "enterprise_id": "${create_enterprise_ref.output.enterprise_id}",
+        "user_name": "${workflow.input.user_name}"
+      },
+      "type": "SIMPLE"
+    }
+  ],
+  "outputParameters": {
+    "enterprise_id": "${create_enterprise_ref.output.enterprise_id}",
+    "user_id": "${create_user_ref.output.user_id}",
+    "status": "Employee onboarding complete"
+  }
+}

@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  # ----------------------------------------
+  # 1. PostgreSQL Database
+  # ----------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "conductor"
+    volumes:
+      # Optional: To persist data on your host
+      - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ----------------------------------------
+  # 2. Conductor Server (Orchestrator)
+  # ----------------------------------------
+  conductor:
+    image: orkesio/orkes-conductor-community-standalone:1.1.12
+    container_name: conductor-server
+    ports:
+      - "8080:8080"
+      - "5000:5000"
+    restart: unless-stopped

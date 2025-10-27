@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-api-service
+  namespace: conductor-demo
+spec:
+  selector:
+    app: go-api-service
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-api-service
+  namespace: conductor-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-api-service
+  template:
+    metadata:
+      labels:
+        app: go-api-service
+    spec:
+      containers:
+        - name: go-api-service
+          image: go-api-service:local
+          imagePullPolicy: Never
+          env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: user
+            - name: DB_PASSWORD
+              value: password
+            - name: DB_NAME
+              value: conductor
+            - name: CONDUCTOR_API_URL
+              value: http://conductor:8080/api
+          ports:
+            - containerPort: 8081
