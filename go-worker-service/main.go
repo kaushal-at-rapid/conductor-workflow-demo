@@ -11,7 +11,7 @@ import (
 	"github.com/conductor-sdk/conductor-go/sdk/model"
 	"github.com/conductor-sdk/conductor-go/sdk/settings"
 	"github.com/conductor-sdk/conductor-go/sdk/worker"
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 )
 
 var db *sql.DB
@@ -145,6 +145,15 @@ func createEnterpriseWorker(t *model.Task) (interface{}, error) {
 	var entpID int
 	err := db.QueryRow("INSERT INTO enterprise (name, details) VALUES ($1, $2) RETURNING id", entpName, "Enterprise Details Here").Scan(&entpID)
 	if err != nil {
+		// If insert failed due to unique constraint, fetch existing enterprise id
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
+			if qerr := db.QueryRow("SELECT id FROM enterprise WHERE name = $1", entpName).Scan(&entpID); qerr != nil {
+				log.Printf("Worker 1 FAILED selecting existing enterprise after duplicate error: %v", qerr)
+				return nil, fmt.Errorf("failed to find existing enterprise after duplicate error: %v", qerr)
+			}
+			log.Printf("Worker 1: Enterprise '%s' already exists with ID: %d", entpName, entpID)
+			return map[string]interface{}{"enterprise_id": entpID}, nil
+		}
 		log.Printf("Worker 1 FAILED: %v", err)
 		return nil, fmt.Errorf("failed to create enterprise: %v", err)
 	}

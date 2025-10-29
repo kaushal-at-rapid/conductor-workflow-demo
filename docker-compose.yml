@@ -17,7 +17,7 @@ services:
       # Optional: To persist data on your host
       - ./pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U user" ]
+      test: [ "CMD-SHELL", "pg_isready -U user -d conductor" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -33,3 +33,45 @@ services:
       - "8080:8080"
       - "5000:5000"
     restart: unless-stopped
+
+  api:
+    build:
+      context: ./go-api-service
+    image: go-api-service:local
+    container_name: go-api-service
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=conductor
+      - CONDUCTOR_API_URL=http://conductor:8080/api
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      conductor:
+#        condition: service_healthy
+    restart: unless-stopped
+    command: ["/go-api-service"]
+
+  worker:
+    build:
+      context: ./go-worker-service
+    image: go-worker-service:local
+    container_name: go-worker-service
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=conductor
+      - CONDUCTOR_API_URL=http://conductor:8080/api
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      conductor:
+#        condition: service_healthy
+    restart: unless-stopped
+    command: ["/go-worker-service"]

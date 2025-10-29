@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conductor-ui
+  namespace: conductor-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conductor-ui
+  template:
+    metadata:
+      labels:
+        app: conductor-ui
+    spec:
+      containers:
+        - name: conductor-ui
+          image: orkesio/orkes-conductor-community-standalone:1.1.12
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: conductor-ui
+  namespace: conductor-demo
+spec:
+  selector:
+    app: conductor-ui
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: NodePort
