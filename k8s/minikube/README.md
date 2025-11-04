@@ -22,6 +22,7 @@ Start Minikube and (optionally) enable the ingress addon.
     # Build Go API and Worker images
    docker build -t go-api-service:local ./go-api-service
    docker build -t go-worker-service:local ./go-worker-service
+   docker build -t conductor-server:local .
 ```
 ### 3) Deploy Kubernetes manifests
 ```bash

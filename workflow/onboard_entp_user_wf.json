@@ -2,6 +2,7 @@
   "name": "onboard_employee_workflow",
   "description": "Workflow to onboard a new employee by creating an enterprise and user record.",
   "version": 1,
+  "ownerEmail": "kaushalsharma@rapidai.com",
   "inputParameters": ["entp_name", "user_name"],
   "tasks": [
     {

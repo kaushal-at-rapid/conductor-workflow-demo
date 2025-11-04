@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: conductor
-          image: orkesio/orkes-conductor-community-standalone:1.1.12
+          image: conductor-server:local
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
