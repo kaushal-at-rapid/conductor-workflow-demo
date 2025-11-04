@@ -37,6 +37,9 @@ var wfExecutor *executor.WorkflowExecutor
 // Shared DB connection for user service
 var db *sql.DB
 
+// TODO: create generic struct for conductor config
+// TODO: create a load/new method that return this config
+
 func init() {
 	// Configure Conductor API URL via environment (same as worker)
 	apiURL := getEnv("CONDUCTOR_API_URL", "http://localhost:8080/api")
@@ -64,7 +67,7 @@ func initDB() error {
 		return fmt.Errorf("error connecting to database: %w", err)
 	}
 	// Ensure tables exist (idempotent)
- _, err = db.Exec(`
+	_, err = db.Exec(`
         CREATE TABLE IF NOT EXISTS enterprise (
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) UNIQUE NOT NULL,
